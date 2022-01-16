@@ -31,5 +31,8 @@ user@box:~$ FORMAT="dnslookup: %{time_namelookup} | connect: %{time_connect} | a
 
 user@box:~$ curl --dns-servers 127.0.0.1:$DNS_PORT -so /dev/null --write-out "$FORMAT" "$URL:6666"
 
+# bug report:
+https://github.com/curl/curl/issues/8283
+
 # remove network-latency:
 user@box:~$ sudo tc qdisc del dev eth0 root
