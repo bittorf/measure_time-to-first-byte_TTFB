@@ -5,11 +5,15 @@ appserver --- internet --- box --- dns-server
 
 ### run
 
+# TODO: https://blog.cloudflare.com/a-question-of-timing/
+
 # minimal http server:
 user@srv:~$ CMD="printf '%s\n%s\n%s\n%s\n\n' 'HTTP/1.0 200 OK' 'Connection: close' 'Content-Type: text/plain' 'Content-Length: 2'; sleep 2; printf '%s' 'OK'"
 user@srv:~$ eval $CMD
 user@srv:~$ while true; do nc -l -p 6666 -c "$CMD"; date; done
 
+# TODO: https://blog.qiqitori.com/2020/04/a-simple-dns-server-that-returns-nxdomain-on-everything/
+# TODO: https://serverfault.com/questions/776049/how-to-simulate-dns-server-response-timeout
 # add dns-latency:
 user@box:~$ DNS_NAME='ip12.ip-178-33-65.eu'
 user@box:~$ DNS_PORT=1337
