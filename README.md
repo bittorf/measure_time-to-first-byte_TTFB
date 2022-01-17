@@ -1,12 +1,25 @@
 # Setup of appserver and box explained
 ```
-[appserver] --- [internet] --- [added_latency] --- [box] --- [added_latency] --- [dns-server]
+   [app-server]
+        |
+    [internet]
+        |
+[artificial_latency]
+        |
+      [box]
+        |
+[artificial_latency]
+        |
+   [dns-server]
 ```
 
 # Run the experiment
 
-* Question: how long does my appserver need from request till outputting the first answerbyte, regardless of network conditions?
-* TODO: https://blog.cloudflare.com/a-question-of-timing/
+## Question:
+
+_how much time does my appserver need
+ from request till outputting the first answerbyte,
+ regardless of network conditions?_
 
 ### start minimal http server
 ```
@@ -20,7 +33,7 @@ user@wwwserver:~$ while true; do nc -l -p 6666 -c "$CMD"; date; done
 user@box:~$ DNS_NAME='ip12.ip-178-33-65.eu'
 user@box:~$ IP="$( dig "$DNS_NAME" A +short )"
 user@box:~$
-user@box:~$ # it *must* be external, not 127.0.0.1 and on routed via same device like IP
+user@box:~$ # it *must* be external, not 127.0.0.1 and routed via same device like IP
 user@box:~$ DNS_SERVER="$( grep nameserver /etc/resolv.conf | head -n1 | cut -d' ' -f2 )"
 user@box:~$ DEV="$( ip -oneline route get "$DNS_SERVER" | cut -d' ' -f3 )"
 user@box:~$
@@ -107,3 +120,5 @@ user@box:~$ curl --silent --write-out '%{json}' "$URL" -o /dev/null | jq .
 user@box:~$ sudo tc qdisc del dev "$DEV" root
 ```
 
+### TODO
+https://blog.cloudflare.com/a-question-of-timing/
