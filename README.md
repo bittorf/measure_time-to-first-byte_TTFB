@@ -24,16 +24,31 @@ _how much time does my application server need
 
 ### start minimal http server
 
-Simulate connect-latency and answer latency, follow RFC2616:
+Simulate connect-latency (1 sec) and answer latency (3 sec), following RFC2616:
 ```
-user@wwwserver:~$ CMD1="printf '%s\r\n' 'HTTP/1.0 200 OK'"
-user@wwwserver:~$ CMD2="printf '%s\r\n%s\r\n%s\r\n\r\n' 'Content-Length: 6' 'Connection: close' 'Content-Type: text/plain'"
-user@wwwserver:~$ CMD3="printf '%s' 'answer'"
-user@wwwserver:~$
-user@wwwserver:~$ CMD="sleep 1; $CMD1; sleep 3; $CMD2; $CMD3"
-user@wwwserver:~$ eval $CMD
-user@wwwserver:~$
-user@wwwserver:~$ while true; do nc -l -p 6666 -c "$CMD"; date; sleep 1; done
+user@wwwserver:~$ touch server.pl && chmod +x server.pl && cat >server.pl <<EOF
+#!/usr/bin/perl
+use Socket;
+my \$port = 6666;
+
+socket( SOCK, PF_INET, SOCK_STREAM, "tcp" );
+setsockopt( SOCK, SOL_SOCKET, SO_REUSEADDR, 1 );
+bind( SOCK, sockaddr_in(\$port, INADDR_ANY) );
+listen( SOCK, SOMAXCONN );
+
+while( accept(CLIENT, SOCK) ){
+  sleep(1);
+  print CLIENT "HTTP/1.0 200 OK\r\n";
+  sleep(3);
+  print CLIENT "Content-Type: text/plain\r\n" .
+	       "Content-Length: 6\r\n" .
+	       "Connection: close\r\n\r\n" .
+               "answer";
+  close CLIENT;
+}
+EOF
+
+user@wwwserver:~$ ./server.pl
 ```
 
 ### prepare variables
