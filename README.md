@@ -1,7 +1,9 @@
 
 # Question:
 
-_how much time does my application server need from  
+when measuring the time for a http-answer of a remote appserver:  
+
+_how much internal time does my application server need from  
  getting the request till outputting the first answer  
  byte, regardless of the network conditions?_
 
@@ -23,6 +25,12 @@ _how much time does my application server need from
 # TLDR! final conclusion
 
 * TODO
+
+proof:
+```
+user@wwwserver:~$ time printf '%s\r\n%s\r\n\r\n' 'GET / HTTP/1.0' 'Host: localhost' | nc 127.0.0.1 6666
+   real	0m4.003s
+```
 
 # Run the experiment
 
