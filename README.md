@@ -86,6 +86,9 @@ user@box:~$ DNS_LATENCY=500ms
 ```
 
 ### test without artificial latency
+
+The used DNS-server is a caching dnsmasq.  
+The remote IP is around 600 kilometers away, both values are plausible.
 ```
 user@box:~$ dig "@$DNS_SERVER" "$DNS_NAME" +noall +answer +stats | grep time:
    ;; Query time: 0 msec
