@@ -135,7 +135,7 @@ user@box:~$ curl --silent --write-out '%{json}' "$URL" -o /dev/null | jq . | gre
   "time_starttransfer": 6.358112,
 ```
 
-### curl without latency:
+### curl without added latency:
 ```
   "time_total": 4.057149,
   "time_namelookup": 0.001864,
@@ -145,10 +145,23 @@ user@box:~$ curl --silent --write-out '%{json}' "$URL" -o /dev/null | jq . | gre
   "time_starttransfer": 4.057048,
 ```
 
+### curl on webserver host, without laggy network at all:
+```
+  "time_total": 4.000617,
+  "time_namelookup": 4.2e-05,
+  "time_connect": 0.000219,
+  "time_appconnect": 0,
+  "time_pretransfer": 0.000286,
+  "time_starttransfer": 1.000386,
+```
+
 ### remove latency / reset network
 ```
 user@box:~$ sudo tc qdisc del dev "$DEV" root
 ```
 
 ### TODO
-https://blog.cloudflare.com/a-question-of-timing/
+
+* https://blog.cloudflare.com/a-question-of-timing/
+** when using this method, I get 4.428 seconds instead of 4.003
+* measure with HTTPS
