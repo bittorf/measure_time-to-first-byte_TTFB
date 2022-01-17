@@ -3,12 +3,13 @@
 
 How to measure the time my appserver needs to generate an answer:  
 
-_how much internal processing time does my application server needs from  
+_how much internal processing time does my application server need from  
  receiving the http-request till outputting the first answer byte,  
  regardless of the network conditions we do not control?_
 
 # TLDR! final conclusion
 
+**this is still wrong and needs more investigation!**
 Measuring timings with and without artifical latency gives the same time:
 
 ```
@@ -166,3 +167,4 @@ user@box:~$ sudo tc qdisc del dev "$DEV" root
   * when using this method, I get 4.428 seconds instead of 4.003
 * measure with HTTPS
 * measure large payload
+* measure timestamps with iptables?
