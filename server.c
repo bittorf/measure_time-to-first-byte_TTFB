@@ -8,11 +8,11 @@
 #include <arpa/inet.h>
 #include <err.h>
 
-char response[] = "HTTP/1.0 200 OK\r\n"
-		  "Content-Type: text/plain\r\n"
-		  "Content-Length: 6\r\n"
-		  "Connection: close\r\n\r\n"
-		  "answer";
+char response1[] = "HTTP/1.0 200 OK\r\n";
+char response2[] = "Content-Type: text/plain\r\n"
+		   "Content-Length: 6\r\n"
+		   "Connection: close\r\n\r\n"
+		   "answer";
 int main()
 {
   int port = 6666;
@@ -32,7 +32,10 @@ int main()
 
   while (1) {
     client_fd = accept(sock, (struct sockaddr *) &cli_addr, &sin_len);
-    write(client_fd, response, sizeof(response) - 1);
+    sleep(1);
+    write(client_fd, response1, sizeof(response1) - 1);
+    sleep(3);
+    write(client_fd, response2, sizeof(response2) - 1);
     close(client_fd);
   }
 }
