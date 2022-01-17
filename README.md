@@ -3,8 +3,8 @@
 
 how to measure the time my appserver needs to generate an answer:  
 
-_how much internal time does my application server needs from  
- getting the http-request till outputting the first answer byte,  
+_how much internal processing time does my application server needs from  
+ receiving the http-request till outputting the first answer byte,  
  regardless of the network conditions we do not control?_
 
 # TLDR! final conclusion
@@ -165,3 +165,4 @@ user@box:~$ sudo tc qdisc del dev "$DEV" root
 * https://blog.cloudflare.com/a-question-of-timing/
 ** when using this method, I get 4.428 seconds instead of 4.003
 * measure with HTTPS
+* measure large payload
