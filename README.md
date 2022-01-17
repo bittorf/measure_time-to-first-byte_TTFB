@@ -1,9 +1,9 @@
 
 # Question:
 
-_how much time does my application server need  
- from request till outputting the first answer byte,  
- regardless of network conditions?_
+_how much time does my application server need from  
+ getting the request till outputting the first answer  
+ byte, regardless of the network conditions?_
 
 # Setup of appserver and box explained
 ```
@@ -19,6 +19,10 @@ _how much time does my application server need
         |
    [dns-server]
 ```
+
+# TLDR! final conclusion
+
+* TODO
 
 # Run the experiment
 
