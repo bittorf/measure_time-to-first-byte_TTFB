@@ -87,11 +87,12 @@ user@box:~$ DNS_LATENCY=500ms
 
 ### test without artificial latency
 
-The used DNS-server is a caching dnsmasq.  
+The used DNS-server is a locally connected caching dnsmasq.  
 The remote IP is around 600 kilometers away, both values are plausible.
 ```
 user@box:~$ dig "@$DNS_SERVER" "$DNS_NAME" +noall +answer +stats | grep time:
    ;; Query time: 0 msec
+
 user@box:~$ ping -c3 "$IP" | grep rtt
    rtt min/avg/max/mdev = 27.284/27.445/27.722/0.196 ms
 ```
