@@ -1,3 +1,10 @@
+
+# Question:
+
+_how much time does my application server need  
+ from request till outputting the first answer byte,  
+ regardless of network conditions?_
+
 # Setup of appserver and box explained
 ```
    [app-server]
@@ -14,12 +21,6 @@
 ```
 
 # Run the experiment
-
-## Question:
-
-_how much time does my appserver need
- from request till outputting the first answerbyte,
- regardless of network conditions?_
 
 ### start minimal http server
 
