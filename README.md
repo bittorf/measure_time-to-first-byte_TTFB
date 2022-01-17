@@ -1,20 +1,21 @@
-### setup
+# Setup of appserver and box explained
 ```
-[appserver] --- [internet] --- [box] --- [dns-server]
+[appserver] --- [internet] --- [added_latency] --- [box] --- [added_latency] --- [dns-server]
 ```
 
-### run
+# Run the experiment
 
-# TODO: https://blog.cloudflare.com/a-question-of-timing/
+* Question: how long does my appserver need from request till outputting the first answerbyte, regardless of network conditions?
+* TODO: https://blog.cloudflare.com/a-question-of-timing/
 
-# minimal http server:
+### start minimal http server
 ```
 user@wwwserver:~$ CMD="printf '%s\n%s\n%s\n%s\n\n' 'HTTP/1.0 200 OK' 'Connection: close' 'Content-Type: text/plain' 'Content-Length: 2'; sleep 2; printf '%s' 'OK'"
 user@wwwserver:~$ eval $CMD
 user@wwwserver:~$ while true; do nc -l -p 6666 -c "$CMD"; date; done
 ```
 
-# add dns- and network-latency using 'tc', 'HTB' and 'netem'
+### prepare variables
 ```
 user@box:~$ DNS_NAME='ip12.ip-178-33-65.eu'
 user@box:~$ IP="$( dig "$DNS_NAME" A +short )"
@@ -25,7 +26,18 @@ user@box:~$ DEV="$( ip -oneline route get "$DNS_SERVER" | cut -d' ' -f3 )"
 user@box:~$
 user@box:~$ NETWORK_LATENCY=900ms
 user@box:~$ DNS_LATENCY=500ms
-user@box:~$
+```
+
+### test without artificial latency
+```
+user@box:~$ dig "@$DNS_SERVER" "$DNS_NAME" +noall +answer +stats | grep time:
+   ;; Query time: 0 msec
+user@box:~$ ping -c3 "$IP" | grep rtt
+   rtt min/avg/max/mdev = 27.284/27.445/27.722/0.196 ms
+```
+
+### add dns- and network-latency using 'tc', 'HTB' and 'netem'
+```
 user@box:~$ sudo tc qdisc del dev $DEV root 2>/dev/null
 user@box:~$ sudo tc qdisc add dev $DEV root handle 1: htb
 user@box:~$
@@ -38,7 +50,7 @@ user@box:~$ sudo tc filter add dev $DEV parent 1: protocol ip prio 2 u32 flowid 
 user@box:~$ sudo tc qdisc  add dev $DEV parent 1:2 handle 20: netem delay "${NETWORK_LATENCY}"
 ```
 
-# test latency:
+### test our artificial latency
 ```
 user@box:~$ dig "@$DNS_SERVER" "$DNS_NAME" +noall +answer +stats | grep time:
    ;; Query time: 500 msec
@@ -46,18 +58,13 @@ user@box:~$ ping -c3 "$IP" | grep rtt
    rtt min/avg/max/mdev = 927.496/927.617/927.788/0.124 ms
 ```
 
-# prepare curl:
+### final curl run
 ```
 user@box:~$ URL="http://$DNS_NAME:6666"
 user@box:~$ curl --silent --write-out '%{json}' "$URL" -o /dev/null | jq .
 ```
 
-# remove latency / reset network:
-```
-user@box:~$ sudo tc qdisc del dev "$DEV" root
-```
-
-# output:
+### output:
 ```
 {
   "url_effective": "http://ip12.ip-178-33-65.eu:6666/",
@@ -94,3 +101,9 @@ user@box:~$ sudo tc qdisc del dev "$DEV" root
   "curl_version": "libcurl/7.74.0 OpenSSL/1.1.1k zlib/1.2.11 brotli/1.0.9 libidn2/2.3.0 libpsl/0.21.0 (+libidn2/2.3.0) libssh2/1.9.0 nghttp2/1.43.0 librtmp/2.3"
 }
 ```
+
+### remove latency / reset network
+```
+user@box:~$ sudo tc qdisc del dev "$DEV" root
+```
+
