@@ -126,12 +126,12 @@ user@box:~$ curl --silent --write-out '%{json}' "$URL" -o /dev/null | jq . | gre
 
 ### curl timings with added artificial latency:
 ```
-  "time_total": 6.358203,
-  "time_namelookup": 0.501944,
-  "time_connect": 1.430336,
+  "time_total": 6.404746,
+  "time_namelookup": 0.548208,
+  "time_connect": 1.476145,
   "time_appconnect": 0,
-  "time_pretransfer": 1.430415,
-  "time_starttransfer": 6.358112,
+  "time_pretransfer": 1.476214,
+  "time_starttransfer": 6.404657,
 ```
 
 ### curl without added latency:
