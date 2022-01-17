@@ -28,6 +28,8 @@ _how much internal time does my application server need from
 
 proof:
 ```
+user@wwwserver:~$ curl --silent --write-out '%{json}' "http://127.0.0.1:6666" -o /dev/null | jq . | grep total
+   "time_total": 4.00063,
 user@wwwserver:~$ time printf '%s\r\n%s\r\n\r\n' 'GET / HTTP/1.0' 'Host: localhost' | nc 127.0.0.1 6666
    real	0m4.003s
 ```
