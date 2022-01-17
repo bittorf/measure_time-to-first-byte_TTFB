@@ -163,6 +163,6 @@ user@box:~$ sudo tc qdisc del dev "$DEV" root
 ### TODO
 
 * https://blog.cloudflare.com/a-question-of-timing/
-** when using this method, I get 4.428 seconds instead of 4.003
+  * when using this method, I get 4.428 seconds instead of 4.003
 * measure with HTTPS
 * measure large payload
