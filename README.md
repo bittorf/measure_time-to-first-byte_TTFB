@@ -24,7 +24,11 @@ _how much internal time does my application server need from
 
 # TLDR! final conclusion
 
-* TODO
+```
+user@wwwserver:~$ FORMAT='%{time_total} - %{time_connect} - %{time_pretransfer} + %{time_namelookup} \n'
+user@wwwserver:~$ curl --silent --write-out "$FORMAT" "http://127.0.0.1:6666" -o /dev/null | bc -l
+   4.000378
+```
 
 proof:
 ```
@@ -116,24 +120,22 @@ user@box:~$ curl --silent --write-out '%{json}' "$URL" -o /dev/null | jq . | gre
 
 ### curl timings with added artificial latency:
 ```
-  "time_total": 6.360595,
-  "time_namelookup": 0.501959,
-  "time_connect": 1.429906,
+  "time_total": 6.358203,
+  "time_namelookup": 0.501944,
+  "time_connect": 1.430336,
   "time_appconnect": 0,
-  "time_pretransfer": 1.429982,
-  "time_starttransfer": 3.359345,
-  "time_redirect": 0,
+  "time_pretransfer": 1.430415,
+  "time_starttransfer": 6.358112,
 ```
 
 ### curl without latency:
 ```
-  "time_total": 4.059765,
-  "time_namelookup": 0.001757,
-  "time_connect": 0.029141,
+  "time_total": 4.057149,
+  "time_namelookup": 0.001864,
+  "time_connect": 0.029073,
   "time_appconnect": 0,
-  "time_pretransfer": 0.029204,
-  "time_starttransfer": 1.059095,
-  "time_redirect": 0,
+  "time_pretransfer": 0.029129,
+  "time_starttransfer": 4.057048,
 ```
 
 ### remove latency / reset network
