@@ -7,6 +7,25 @@ _how much internal time does my application server need from
  getting the request till outputting the first answer  
  byte, regardless of the network conditions we do not control?_
 
+# TLDR! final conclusion
+
+Measuring timings with and without artifical latency gives the same time:
+
+```
+user@wwwserver:~$ FORMAT='%{time_total} - %{time_connect} - %{time_pretransfer} + %{time_namelookup} \n'
+user@wwwserver:~$ curl --silent --write-out "$FORMAT" "$URL" -o /dev/null | bc -l
+   4.000378
+```
+
+proof: when sending the query on localhost without laggy network:
+```
+user@wwwserver:~$ curl --silent --write-out '%{time_total}\n' "http://127.0.0.1:6666" -o /dev/null
+   "time_total": 4.00063,
+user@wwwserver:~$ time printf '%s\r\n%s\r\n\r\n' 'GET / HTTP/1.0' 'Host: localhost' | nc 127.0.0.1 6666
+   real	0m4.003s
+```
+
+
 # Setup of appserver and box explained
 ```
    [app-server]
@@ -20,22 +39,6 @@ _how much internal time does my application server need from
 [artificial_latency]
         |
    [dns-server]
-```
-
-# TLDR! final conclusion
-
-```
-user@wwwserver:~$ FORMAT='%{time_total} - %{time_connect} - %{time_pretransfer} + %{time_namelookup} \n'
-user@wwwserver:~$ curl --silent --write-out "$FORMAT" "http://127.0.0.1:6666" -o /dev/null | bc -l
-   4.000378
-```
-
-proof:
-```
-user@wwwserver:~$ curl --silent --write-out '%{json}' "http://127.0.0.1:6666" -o /dev/null | jq . | grep total
-   "time_total": 4.00063,
-user@wwwserver:~$ time printf '%s\r\n%s\r\n\r\n' 'GET / HTTP/1.0' 'Host: localhost' | nc 127.0.0.1 6666
-   real	0m4.003s
 ```
 
 # Run the experiment
