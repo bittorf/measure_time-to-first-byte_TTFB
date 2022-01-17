@@ -24,10 +24,10 @@ _how much time does my application server need
 
 ### start minimal http server
 
-Simulate connect-latency and answer latency:
+Simulate connect-latency and answer latency, follow RFC2616:
 ```
-user@wwwserver:~$ CMD1="printf '%s\n' 'HTTP/1.0 200 OK'"
-user@wwwserver:~$ CMD2="printf '%s\n%s\n%s\n\n' 'Connection: close' 'Content-Type: text/plain' 'Content-Length: 6'"
+user@wwwserver:~$ CMD1="printf '%s\r\n' 'HTTP/1.0 200 OK'"
+user@wwwserver:~$ CMD2="printf '%s\r\n%s\r\n%s\r\n\r\n' 'Content-Length: 6' 'Connection: close' 'Content-Type: text/plain'"
 user@wwwserver:~$ CMD3="printf '%s' 'answer'"
 user@wwwserver:~$
 user@wwwserver:~$ CMD="sleep 1; $CMD1; sleep 3; $CMD2; $CMD3"
