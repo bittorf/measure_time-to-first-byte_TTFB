@@ -1,7 +1,7 @@
 
 # Question:
 
-how to measure the time my appserver needs to generate an answer:  
+How to measure the time my appserver needs to generate an answer:  
 
 _how much internal processing time does my application server needs from  
  receiving the http-request till outputting the first answer byte,  
@@ -24,7 +24,6 @@ user@wwwserver:~$ curl --silent --write-out '%{time_total}\n' "http://127.0.0.1:
 user@wwwserver:~$ time printf '%s\r\n%s\r\n\r\n' 'GET / HTTP/1.0' 'Host: localhost' | nc 127.0.0.1 6666
    real	0m4.003s
 ```
-
 
 # Setup of appserver and box explained
 ```
@@ -155,8 +154,9 @@ user@box:~$ curl --silent --write-out '%{json}' "$URL" -o /dev/null | jq . | gre
   "time_starttransfer": 1.000386,
 ```
 
-### remove latency / reset network
+### list and remove latency / reset network
 ```
+user@box:~$ sudo tc qdisc ls  dev "$DEV"
 user@box:~$ sudo tc qdisc del dev "$DEV" root
 ```
 
