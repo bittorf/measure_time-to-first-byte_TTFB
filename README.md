@@ -1,11 +1,11 @@
 
 # Question:
 
-when measuring the time for generating an answer of a remote appserver:  
+how to measure the time my appserver needs to generate an answer:  
 
-_how much internal time does my application server need from  
- getting the request till outputting the first answer  
- byte, regardless of the network conditions we do not control?_
+_how much internal time does my application server needs from  
+ getting the http-request till outputting the first answer byte,  
+ regardless of the network conditions we do not control?_
 
 # TLDR! final conclusion
 
