@@ -7,6 +7,9 @@ _how much internal processing time does my application server need from
  receiving the http-request till outputting the first answer byte,  
  regardless of the network conditions we do not control?_
 
+In other words:  
+This is [TTFB](https://en.wikipedia.org/wiki/Time_to_first_byte) but [without network latency.](https://blog.cloudflare.com/ttfb-time-to-first-byte-considered-meaningles/)
+
 # TLDR! final conclusion
 
 **this is still wrong and needs more investigation!**  
@@ -173,7 +176,7 @@ user@box:~$ sudo tc qdisc ls  dev "$DEV"
 user@box:~$ sudo tc qdisc del dev "$DEV" root
 ```
 
-### TODO
+### ToDo
 
 * https://blog.cloudflare.com/a-question-of-timing/
   * when using this method, I get 4.428 seconds instead of 4.003
