@@ -1,5 +1,5 @@
 
-# Question:
+# Question
 
 How to measure the time my appserver needs to generate an answer:  
 
@@ -13,14 +13,16 @@ _how much internal processing time does my application server need from
 Measuring timings with and without artifical latency gives the same time:
 
 ```
-user@wwwserver:~$ FORMAT='%{time_total} - %{time_connect} - %{time_pretransfer} + %{time_namelookup} \n'
-user@wwwserver:~$ curl --silent --write-out "$FORMAT" "$URL" -o /dev/null | bc -l
+user@wwwserver:~$ URL=...
+user@wwwserver:~$ CALC='define x(n) { if (n<0) n=0.001; return n }'
+user@wwwserver:~$ FORMAT="$CALC;x( %{time_total} - %{time_connect} - %{time_pretransfer} + %{time_namelookup} )\n"
+user@wwwserver:~$ curl --silent --range 0-9 --write-out "$FORMAT" "$URL" -o /dev/null | bc -l
    4.000378
 ```
 
-proof: when sending the query on localhost without laggy network:
+proof: when sending the same query on localhost without the laggy network:
 ```
-user@wwwserver:~$ curl --silent --write-out '%{time_total}\n' "http://127.0.0.1:6666" -o /dev/null
+user@wwwserver:~$ curl --silent --range 0-9 --write-out '%{time_total}\n' "http://127.0.0.1:6666" -o /dev/null
    "time_total": 4.00063,
 user@wwwserver:~$ time printf '%s\r\n%s\r\n\r\n' 'GET / HTTP/1.0' 'Host: localhost' | nc 127.0.0.1 6666
    real	0m4.003s
@@ -40,6 +42,13 @@ user@wwwserver:~$ time printf '%s\r\n%s\r\n\r\n' 'GET / HTTP/1.0' 'Host: localho
         |
    [dns-server]
 ```
+
+# Background
+
+When you want to check the answer time of your application servers, you want to know:  
+Is there anything you can fix to make them perform better?  
+You dont want to get false alarms, if the internet is laggy.  
+You only care about things you can change, not things you have no influence on.  
 
 # Run the experiment
 
@@ -115,6 +124,7 @@ user@box:~$ sudo tc qdisc  add dev $DEV parent 1:2 handle 20: netem delay "${NET
 ```
 user@box:~$ dig "@$DNS_SERVER" "$DNS_NAME" +noall +answer +stats | grep time:
    ;; Query time: 500 msec
+
 user@box:~$ ping -c3 "$IP" | grep rtt
    rtt min/avg/max/mdev = 927.496/927.617/927.788/0.124 ms
 ```
@@ -122,10 +132,10 @@ user@box:~$ ping -c3 "$IP" | grep rtt
 ### final curl run
 ```
 user@box:~$ URL="http://$DNS_NAME:6666"
-user@box:~$ curl --silent --write-out '%{json}' "$URL" -o /dev/null | jq . | grep time
+user@box:~$ curl --range 0-9 --silent --write-out '%{json}' "$URL" -o /dev/null | jq . | grep time
 ```
 
-### curl timings with added artificial latency:
+### curl timings with added artificial latency
 ```
   "time_total": 6.404746,
   "time_namelookup": 0.548208,
@@ -135,7 +145,7 @@ user@box:~$ curl --silent --write-out '%{json}' "$URL" -o /dev/null | jq . | gre
   "time_starttransfer": 6.404657,
 ```
 
-### curl without added latency:
+### curl without added latency
 ```
   "time_total": 4.057149,
   "time_namelookup": 0.001864,
@@ -145,7 +155,7 @@ user@box:~$ curl --silent --write-out '%{json}' "$URL" -o /dev/null | jq . | gre
   "time_starttransfer": 4.057048,
 ```
 
-### curl on webserver host, without laggy network at all:
+### curl on webserver host, without laggy network at all
 ```
   "time_total": 4.000617,
   "time_namelookup": 4.2e-05,
@@ -165,6 +175,5 @@ user@box:~$ sudo tc qdisc del dev "$DEV" root
 
 * https://blog.cloudflare.com/a-question-of-timing/
   * when using this method, I get 4.428 seconds instead of 4.003
-* measure with HTTPS
-* measure large payload
+* measure with HTTPS to fill appconnect?
 * measure timestamps with iptables?
