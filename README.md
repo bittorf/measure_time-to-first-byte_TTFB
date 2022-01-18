@@ -108,6 +108,8 @@ user@box:~$ ping -c3 "$IP" | grep rtt
 
 ### add dns- and network-latency using 'tc', 'HTB' and 'netem'
 ```
+user@box:~$ # needed vars: $DEV $DNS_SERVER $DNS_LATENCY $IP $NETWORK_LATENCY
+user@box:~$
 user@box:~$ sudo tc qdisc del dev $DEV root 2>/dev/null
 user@box:~$ sudo tc qdisc add dev $DEV root handle 1: htb
 user@box:~$
@@ -175,5 +177,6 @@ user@box:~$ sudo tc qdisc del dev "$DEV" root
 
 * https://blog.cloudflare.com/a-question-of-timing/
   * when using this method, I get 4.428 seconds instead of 4.003
+* check multiple redirects
 * measure with HTTPS to fill appconnect?
 * measure timestamps with iptables?
