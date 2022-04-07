@@ -15,11 +15,23 @@ This is [TTFB](https://en.wikipedia.org/wiki/Time_to_first_byte) but [without ne
 **this is still wrong and needs more investigation!**  
 Measuring timings with and without artifical latency gives the same time:
 
+Works also with webservers without support for range-requests:
+
 ```
-user@wwwserver:~$ URL=...
-user@wwwserver:~$ CALC='define x(n) { if (n<0) n=0.001; return n }'
-user@wwwserver:~$ FORMAT="$CALC;x( %{time_total} - %{time_connect} - %{time_pretransfer} + %{time_namelookup} )\n"
-user@wwwserver:~$ curl --silent --range 0-9 --write-out "$FORMAT" "$URL" -o /dev/null | bc -l
+user@box:~$ URL=...
+user@box:~$ CALC='define x(n) { if (n<0) n=0.001; return n }'
+user@box:~$ FORMAT="$CALC;x( %{time_total} - %{time_connect} - %{time_pretransfer} + %{time_namelookup} )\n"
+user@box:~$ fetch() { curl --silent --write-out "%{stderr}$FORMAT" "$1" | head -c1; }
+user@box:~$ fetch "$URL" 2>&1 | cut -c2- | bc -l
+```
+
+When your webserver respects range requests:
+
+```
+user@box:~$ URL=...
+user@box:~$ CALC='define x(n) { if (n<0) n=0.001; return n }'
+user@box:~$ FORMAT="$CALC;x( %{time_total} - %{time_connect} - %{time_pretransfer} + %{time_namelookup} )\n"
+user@box:~$ curl --silent --range 0-9 --write-out "$FORMAT" "$URL" -o /dev/null | bc -l
    4.000378
 ```
 
