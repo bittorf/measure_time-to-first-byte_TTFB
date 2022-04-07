@@ -23,6 +23,7 @@ user@box:~$ CALC='define x(n) { if (n<0) n=0.001; return n }'
 user@box:~$ FORMAT="$CALC;x( %{time_total} - %{time_connect} - %{time_pretransfer} + %{time_namelookup} )\n"
 user@box:~$ fetch() { curl --silent --write-out "%{stderr}$FORMAT" "$1" | head -c1; }
 user@box:~$ fetch "$URL" 2>&1 | cut -c2- | bc -l
+   4.000378
 ```
 
 When your webserver respects range requests:
